@@ -38,26 +38,31 @@ This project is best run on Macintosh with Chrome, and is intended to run on Lin
 ```
 # install Meteor, if you don't already have it
 # this is the build tool / compiler  
-curl https://install.meteor.com/ | sh
+curl https://install.meteor.com/ | sh  
 
 # clone the Node on FHIR boilerplate
 # this boilerplate is similar to WordPress
 # and supports a plugin/package architecture
-git clone https://github.com/symptomatic/node-on-fhir
-cd node-on-fhir
+git clone https://github.com/symptomatic/node-on-fhir  
+cd node-on-fhir  
 
 # clone this package into the project
 cd packages
-git clone https://github.com/symptomatic/covid19-on-fhir
-git clone https://github.com/symptomatic/covid19-geomapping
+git clone https://github.com/symptomatic/covid19-on-fhir  
+git clone https://github.com/symptomatic/covid19-geomapping  
 
 # install dependencies
 cd ..
 meteor npm install
 
 # run the application  
-meteor run --extra-packages symptomatic:covid19-on-fhir,symptomatic:covid19-geomapping --settings packages/covid19-on-fhir/configs/settings.covid19.maps.json  
+meteor run --extra-packages symptomatic:covid19-on-fhir,symptomatic:covid19-geomapping --settings packages/covid19-on-fhir/configs/settings.covid19.maps.json   
 ```
+
+Note installation will be greatly helped if you get yourself a Google Maps API key:
+https://developers.google.com/maps/documentation/javascript/get-api-key  
+
+After getting it, put it into `configs/settings.covid19.maps.localhost.json`.  Put it under `public.google.maps.apiKey`.  
 
 #### FAQ  
 
