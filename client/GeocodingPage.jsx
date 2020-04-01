@@ -1187,7 +1187,7 @@ function GeocodingPage(props){
     
 
   return (
-    <PageCanvas id='fetchDataFromHospitalPage' headerHeight={158} >
+    <PageCanvas id='geocodingPage' headerHeight={158} >
       <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} local="en">
         <Grid container spacing={3} >
           <Grid item xs={4}>

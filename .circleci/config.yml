@@ -168,7 +168,8 @@ jobs:
     - run: cd ../node-on-fhir && meteor add dispatch:mocha practicalmeteor:chai
     - run: cd ../node-on-fhir && mkdir imports 
 
-    - run: cp tests/nightwatch/walkthroughs/helloCovid.js ../node-on-fhir/imports/
+    - run: cp tests/nightwatch/walkthroughs/helloMap.js ../node-on-fhir/imports/
+    - run: cp tests/nightwatch/walkthroughs/helloGeocoding.js ../node-on-fhir/imports/
 
     # make sure we have the latest Chrome (specifically wanting Chrome 75; may change with time)
     - run:
