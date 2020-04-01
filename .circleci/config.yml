@@ -158,7 +158,8 @@ jobs:
     - run: cd ../node-on-fhir/packages && ls -la
 
     # install dependencies
-    - run: cd ../node-on-fhir && meteor add symptomatic:covid19-geomapping,symptomatic:covid19-on-fhir
+    - run: cd ../node-on-fhir && meteor add symptomatic:covid19-geomapping
+    - run: cd ../node-on-fhir && meteor add symptomatic:covid19-on-fhir
     - run: cd ../node-on-fhir && meteor npm install
 
     # install test runner
