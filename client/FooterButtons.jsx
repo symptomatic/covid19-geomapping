@@ -10,7 +10,6 @@ import { get } from 'lodash';
 import JSON5 from 'json5';
 
 import LocationMethods from '../lib/LocationMethods';
-import ReportingMethods from '../lib/ReportingMethods';
 
 let apiKey = get(Meteor, 'settings.public.interfaces.default.auth.username', '');
 let usePseudoCodes = get(Meteor, 'settings.public.usePseudoCodes', false);
@@ -114,26 +113,4 @@ export function MapButtons(props){
     </MuiThemeProvider>
   );
 }
-
-
-
-export function ReportingButtons(props){
-  const buttonClasses = useTabStyles();
-
-  function initializeMeasures(){
-    console.log('Initializing Measures');
-
-    ReportingMethods.initializeSampleMeasure();
-    ReportingMethods.initializeSampleMeasureReport();
-    LocationMethods.initializeHospitals();
-  }
-  return (
-    <MuiThemeProvider theme={muiTheme} >
-      <Button onClick={ initializeMeasures.bind() } className={ buttonClasses.button }>
-        Initialize Measures
-      </Button>      
-    </MuiThemeProvider>
-  );
-}
-
 

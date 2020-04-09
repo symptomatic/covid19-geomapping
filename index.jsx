@@ -1,18 +1,23 @@
 import React from 'react';
 
 import GeocodingPage from './client/GeocodingPage';
-import GoogleMapsPage from './client/GoogleMapsPage';
+import MunicipalMapPage from './client/MunicipalMapPage';
+import HospitalsMapPage from './client/HospitalsMapPage';
 
 import { 
   MapButtons
 } from './client/FooterButtons';
 
-import { HeaderNavigation } from './client/HeaderNavigation';
 
 var DynamicRoutes = [{
   'name': 'MapPage',
   'path': '/map',
-  'component': GoogleMapsPage,
+  'component': MunicipalMapPage,
+  'requireAuth': true
+}, {
+  'name': 'HospitalsMapPage',
+  'path': '/hospitals-map',
+  'component': HospitalsMapPage,
   'requireAuth': true
 }, {
   'name': 'GeocodingPage',
@@ -32,8 +37,8 @@ export {
   DynamicRoutes, 
 
   GeocodingPage,
-  GoogleMapsPage,
+  MunicipalMapPage,
+  HospitalsMapPage,
 
-  HeaderNavigation,
   FooterButtons
 };
