@@ -22,7 +22,7 @@ Package.onUse(function(api) {
 
     api.use('browser-policy@1.1.0')
 
-    api.use('clinical:hl7-fhir-data-infrastructure@6.3.2');
+    api.use('clinical:hl7-fhir-data-infrastructure@6.4.1');
 
     api.addFiles('stylesheets/maps.css', 'client');
     
@@ -31,7 +31,9 @@ Package.onUse(function(api) {
 
     api.addFiles('geodata/illinois-epa-toxic-inventory-sites.geojson', 'client', {isAsset: true});
     api.addFiles('geodata/covid19-patients-synthea.geojson', 'client', {isAsset: true});
-    
+
+    api.addFiles('geodata/Hospitals.geojson', 'server', {isAsset: true});
+
     api.mainModule('index.jsx', 'client');
 });
 
