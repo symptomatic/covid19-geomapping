@@ -22,12 +22,13 @@ Package.onUse(function(api) {
 
     api.use('browser-policy@1.1.0')
 
-    api.use('clinical:hl7-fhir-data-infrastructure@6.4.1');
+    api.use('clinical:hl7-fhir-data-infrastructure@6.4.4');
 
     api.addFiles('stylesheets/maps.css', 'client');
     
     api.addFiles('server/BrowserPolicies.js', 'server');
     api.addFiles('server/Geocoding.js', 'server');
+    api.addFiles('server/HospitalIndex.js', 'server');
 
     api.addFiles('geodata/illinois-epa-toxic-inventory-sites.geojson', 'client', {isAsset: true});
     api.addFiles('geodata/covid19-patients-synthea.geojson', 'client', {isAsset: true});
