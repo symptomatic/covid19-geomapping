@@ -5,6 +5,7 @@ import MunicipalMapPage from './client/MunicipalMapPage';
 import HospitalsMapPage from './client/HospitalsMapPage';
 
 import HospitalLocationsPage from './client/HospitalLocationsPage';
+import HospitalSearchDialog from './client/HospitalSearchDialog';
 
 import { 
   MapButtons,
@@ -61,6 +62,11 @@ let FooterButtons = [{
   component: <HospitalsMapButtons />
 }];
 
+let DialogComponents = [{
+  name: "HospitalSearchDialog",
+  component: <HospitalSearchDialog />
+}]
+
 
 export { 
   DynamicRoutes, 
@@ -72,5 +78,6 @@ export {
   HospitalLocationsPage,
 
   FooterButtons,
-  SidebarWorkflows
+  SidebarWorkflows,
+  DialogComponents
 };

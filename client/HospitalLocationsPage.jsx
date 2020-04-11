@@ -13,7 +13,7 @@ import {
 
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
-import {LocationsTable} from 'meteor/clinical:hl7-fhir-data-infrastructure';
+import { LocationsTable, HospitalLocations } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
@@ -174,7 +174,7 @@ export class HospitalLocationsPage extends React.Component {
     return (
       <PageCanvas id="locationsPage" headerHeight={headerHeight} >
         <MuiThemeProvider theme={muiTheme} >
-          <StyledCard height="auto" scrollable={true} margin={20} headerHeight={headerHeight} >
+          <StyledCard height="auto" scrollable={true} margin={20} >
             <CardHeader
               title="Hospital Locations"
             />

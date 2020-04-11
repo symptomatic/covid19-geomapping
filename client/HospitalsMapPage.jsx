@@ -6,14 +6,10 @@ import ReactMixin from 'react-mixin';
 
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
 
 import { Session } from 'meteor/session';
-import { Random } from 'meteor/session';
 
-import { get, cloneDeep } from 'lodash';
-
-import { MapDot } from './MapDot';
+import { get } from 'lodash';
 
 import { HTTP } from 'meteor/http';
 
@@ -239,8 +235,9 @@ export class HospitalsMapPage extends React.Component {
 
     let geoJsonLayer = this.data.geoJsonLayer;
 
-    if(process.env.NODE_ENV !== "test"){
-      map = <GoogleMapReact
+    return(
+      <div id="mapsPage" style={this.data.style.page}>
+        <GoogleMapReact
            id="googleMap"
            defaultCenter={this.data.center}
            defaultZoom={this.data.zoom}
@@ -259,31 +256,7 @@ export class HospitalsMapPage extends React.Component {
             if(process.env.NODE_ENV === "test"){
                 console.log('maps', maps)
                 console.log('map', map)
-            }
-            
-            //----------------------------------------------------------------------------------------------------
-            // Layers
-
-            // let myLayers = new maps.MVCObject();
-            // myLayers.setValues({
-            //   hospitals: null,
-            //   laboratories: null,
-            //   patientHomes: map
-            // });
-
-            // let hospitalMarker = new google.maps.Marker({
-            //   map: map,
-            //   draggable: true,
-            //   // animation: google.maps.Animation.DROP,
-            //   position: {lat: 41.8955885, lng: -87.6208858}
-            // });
-            // hospitalMarker.bindTo('map', myLayers, 'parks');
-
-            // //show the hospitals
-            // myLayers.set('hospitals', map);
-
-            // //hide the laboratories
-            // myLayers.set('laboratories', null);
+            }            
 
             //----------------------------------------------------------------------------------------------------
 
@@ -338,48 +311,8 @@ export class HospitalsMapPage extends React.Component {
                 map: map
               });
 
-              heatmap.set('radius', 10);
-              heatmap.set('opacity', 0.5);
-              heatmap.set('dissipating', false);
-              heatmap.set('maxIntensity', 50);
-              heatmap.set('gradient', heatMapGradient);
-              heatmap.setMap(map);
 
-            } else {              
-              console.log('Ohai, which geodataUrl are we fetching:  ' + geodataUrl)
-              HTTP.get(geodataUrl, function(error, data){
-                var geojson = EJSON.parse(data.content);
-                console.log('loadGeoJson', geojson);
-
-                geojson.features.forEach(function(feature){
-                  if(get(feature, 'geometry.coordinates[0]') && get(feature, 'geometry.coordinates[1]')){                    
-                    dataLayer.push({location: new maps.LatLng(get(feature, 'geometry.coordinates[1]'), get(feature, 'geometry.coordinates[0]')), weight: 5});
-                  }
-                })
-
-                console.log('Constructed a datalayer to render.', dataLayer)
-
-                if(process.env.NODE_ENV === "test"){
-                  console.log('dataLayer', dataLayer);
-                }
-
-                // map.data.addGeoJson(geoJsonLayer);  
-                map.data.loadGeoJson(geodataUrl);
-
-                // if we turn on the heatmap
-                var heatmap = new maps.visualization.HeatmapLayer({
-                  data: dataLayer,
-                  map: map
-                });
-
-                heatmap.set('radius', 10);
-                heatmap.set('opacity', 0.5);
-                heatmap.set('dissipating', false);
-                heatmap.set('maxIntensity', 50);                
-                heatmap.set('gradient', heatMapGradient);
-                heatmap.setMap(map);
-              });
-            }              
+            }          
 
             map.data.setStyle({
               // raw binary data (extremely fast!)
@@ -417,22 +350,9 @@ export class HospitalsMapPage extends React.Component {
               //  text: 'foo'
               //}
             });
-
           }}
-         >            
-
-          {/* <div className='homeBox' lat={this.data.center.lat} lng={ this.data.center.lng} style={{width: '180px'}}>            
-            <MapOrbital />
-            <MapDot />
-          </div> */}          
-
-         </GoogleMapReact>;
-    } else {
-      console.log("NOTICE:  You are running in the 'test' environment.  Google Maps and other external libraries are disabled to prevent errors with the automated test runners.")
-    }
-    return(
-      <div id="mapsPage" style={this.data.style.page}>
-        {map}
+         >                 
+         </GoogleMapReact>
       </div>
     );
   }

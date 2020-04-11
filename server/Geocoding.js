@@ -97,11 +97,7 @@ Meteor.methods({
           }
         }
       });
-
-
-
     }
-
   },
   geocodePatientAddresses(patientsArray){
     //check(patientsArray, Array);
@@ -145,6 +141,10 @@ Meteor.methods({
     })
     console.log('geocodePatientAddresses().fhirLocations', fhirLocations)
     return fhirLocations;
+  },
+  geocodeMapCentroid(centroidAddress){
+    console.log('Geocoding map centroid.', centroidAddress);
+    
   },
   // a single address
   geocodePatientAddress(patient){

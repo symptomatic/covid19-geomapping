@@ -9,27 +9,14 @@ import { Button } from '@material-ui/core';
 import { get } from 'lodash';
 import JSON5 from 'json5';
 
+import { HospitalLocations } from 'meteor/clinical:hl7-fhir-data-infrastructure';
+
 import LocationMethods from '../lib/LocationMethods';
 
-let apiKey = get(Meteor, 'settings.public.interfaces.default.auth.username', '');
-let usePseudoCodes = get(Meteor, 'settings.public.usePseudoCodes', false);
-let fhirBaseUrl = get(Meteor, 'settings.public.interfaces.default.channel.endpoint', false);
-
-
-// =========================================================================================
-// HELPER FUNCTIONS
-
-
-// function isFhirServerThatRequiresApiKey(){
-//   if(["https://syntheticmass.mitre.org/v1/fhir"].includes(get(Meteor, 'settings.public.interfaces.default.channel.endpoint'))){
-//     return true;
-//   } else {
-//     return false
-//   }
-// }
 
 
 //========================================================================================================
+// Theming
 
 import {
   fade,
@@ -87,7 +74,7 @@ import {
   }));
 
 //============================================================================================================================
-// FETCH
+// Map Buttons
 
 export function MapButtons(props){
   const buttonClasses = useTabStyles();
@@ -104,9 +91,27 @@ export function MapButtons(props){
   }
   return (
     <MuiThemeProvider theme={muiTheme} >
-      <Button onClick={ epaToxicInventory.bind() } className={ buttonClasses.button }>
-        Sample Data
+      <Button onClick={ epaToxicInventory.bind() } className={ buttonClasses.west_button }>
+        Sample Data (Chicago Crime)  
       </Button>      
+    </MuiThemeProvider>
+  );
+}
+
+
+//============================================================================================================================
+// Hospitals Map 
+
+
+export function HospitalsMapButtons(props){
+  const buttonClasses = useTabStyles();
+
+  return (
+    <MuiThemeProvider theme={muiTheme} >
+      <div></div>
+      {/* <Button onClick={ epaToxicInventory.bind() } className={ buttonClasses.button }>
+        Sample Data
+      </Button>       */}
     </MuiThemeProvider>
   );
 }
@@ -133,7 +138,15 @@ export function HospitalLocationButtons(props){
     Meteor.call('fetchAllHospitalLocations', function(error, result){
       if(error) console.log('error', error)
       if(result){
-        console.log('result', result)
+        console.log('Received a response from the Fetch All query.')
+        if(Array.isArray(result)){
+          result.forEach(function(location, index){
+            HospitalLocations.upsert({id: location.id}, {$set: location});
+            if(index % 10 === 0){
+              Session.set('lastUpdated', new Date());
+            }
+          })
+        }
       }
     });
   }
@@ -141,17 +154,31 @@ export function HospitalLocationButtons(props){
     console.log('Clearing hospitals...');
     HospitalLocations.remove({});
   }
+  function toggleHospitalSearchDialog(){
+    console.log('Toggle dialog open/close.')
+    Session.set('mainAppDialogJson', false);
+    Session.set('mainAppDialogTitle', "Search Hospital Index");
+    Session.set('mainAppDialogComponent', "HospitalSearchDialog");
+    Session.set('lastUpdated', new Date())
+    Session.toggle('mainAppDialogOpen');
+  }
   return (
     <MuiThemeProvider theme={muiTheme} >
-      <Button onClick={ handleInitChicagoHospitals.bind(this) } className={ buttonClasses.west_button }>
+      {/* <Button onClick={ handleInitChicagoHospitals.bind(this) } className={ buttonClasses.west_button }>
         Init Chicago Hospitals
-      </Button>
-      <Button onClick={ handleInitUnitedStatesHospitalsServer.bind(this) } className={ buttonClasses.west_button }>
+      </Button> */}
+      {/* <Button onClick={ handleInitUnitedStatesHospitalsServer.bind(this) } className={ buttonClasses.west_button }>
         Init U.S. Hospital Server Index
-      </Button>      
-      <Button onClick={ handleInitUnitedStatesHospitalsClient.bind(this) } className={ buttonClasses.west_button }>
+      </Button>       */}
+      {/* <Button onClick={ handleInitUnitedStatesHospitalsClient.bind(this) } className={ buttonClasses.west_button }>
         Load U.S. Hospital on Client
+      </Button>       */}
+      <Button onClick={ toggleHospitalSearchDialog.bind(this) } className={ buttonClasses.west_button }>
+        Search Hospitals
       </Button>      
+
+
+
       <Button onClick={ clearHospitals.bind() } className={ buttonClasses.east_button }>
         Clear Hospitals
       </Button>      

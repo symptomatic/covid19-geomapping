@@ -21,6 +21,18 @@ import { HTTP } from 'meteor/http';
 const AnyReactComponent = ({ text }) => <Card><CardContent>{text}</CardContent></Card>;
 
 Session.setDefault('mapName', false);
+Session.setDefault('displayHeatmap', true);
+Session.setDefault('displayMarkers', false);
+Session.setDefault('displayLabels', false);
+
+Session.setDefault('centroidAddress', "Chicago, IL");
+Session.setDefault('centroidLatitude', 41.8781136);
+Session.setDefault('centroidLongitude', -87.6297982);
+
+Session.setDefault('heatmapOpacity', 10);
+Session.setDefault('heatmapRadius', 0.5);
+Session.setDefault('heatmapMaxIntensity', 50);
+Session.setDefault('heatmapDissipating', false);
 
 export class MunicipalMapPage extends React.Component {
   constructor(props) {
@@ -38,8 +50,8 @@ export class MunicipalMapPage extends React.Component {
         }
       },
       center: {
-        lat: 41.8748903,
-        lng: -87.7035464
+        lat: Session.get('centroidLatitude'),
+        lng: Session.get('centroidLongitude')
       },
       zoom: 13.9,
       layers: {
@@ -211,7 +223,14 @@ export class MunicipalMapPage extends React.Component {
           }
         ]
       },
-      geoJsonLayer: Session.get('geoJsonLayer')
+      geoJsonLayer: Session.get('geoJsonLayer'),
+      displayHeatmap: Session.get('displayHeatmap'),
+      heatmapOpacity: Session.get('heatmapOpacity'),
+      heatmapRadius: Session.get('heatmapRadius'),
+      heatmapMaxIntensity: Session.get('heatmapMaxIntensity'),
+      heatmapDissipating: Session.get('heatmapDissipating'),
+      displayMarkers: Session.get('displayMarkers'),
+      displayLabels: Session.get('displayLabels')
     };
 
     data.apiKey = get(Meteor, 'settings.public.google.maps.apiKey', '');
@@ -324,9 +343,24 @@ export class MunicipalMapPage extends React.Component {
             }
 
             if(geoJsonLayer){
+
+              function pinSymbol(color) {
+                return {
+                    path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
+                    fillColor: color,
+                    fillOpacity: 1,
+                    strokeColor: '#000',
+                    strokeWeight: 2,
+                    scale: 1
+                };
+              }
+
               geoJsonLayer.features.forEach(function(feature){
                 if(get(feature, 'geometry.coordinates[0]') && get(feature, 'geometry.coordinates[1]')){                    
-                  dataLayer.push({location: new maps.LatLng(get(feature, 'geometry.coordinates[1]'), get(feature, 'geometry.coordinates[0]')), weight: 5});
+                  dataLayer.push({
+                    location: new maps.LatLng(get(feature, 'geometry.coordinates[1]'), get(feature, 'geometry.coordinates[0]')), 
+                    icon: pinSymbol("#FFF"),
+                    weight: 5});
                 }
               })
               
@@ -338,13 +372,14 @@ export class MunicipalMapPage extends React.Component {
                 map: map
               });
 
-              heatmap.set('radius', 10);
-              heatmap.set('opacity', 0.5);
-              heatmap.set('dissipating', false);
-              heatmap.set('maxIntensity', 50);
-              heatmap.set('gradient', heatMapGradient);
-              heatmap.setMap(map);
-
+              if(self.data.displayHeatmap){
+                heatmap.set('radius', self.data.heatmapRadius);
+                heatmap.set('opacity', self.data.heatmapOpacity);
+                heatmap.set('dissipating', self.data.heatmapDissipating);
+                heatmap.set('maxIntensity', self.data.heatmapMaxIntensity);                
+                heatmap.set('gradient', heatMapGradient);
+                heatmap.setMap(map);  
+              }
             } else {              
               console.log('Ohai, which geodataUrl are we fetching:  ' + geodataUrl)
               HTTP.get(geodataUrl, function(error, data){
@@ -372,16 +407,18 @@ export class MunicipalMapPage extends React.Component {
                   map: map
                 });
 
-                heatmap.set('radius', 10);
-                heatmap.set('opacity', 0.5);
-                heatmap.set('dissipating', false);
-                heatmap.set('maxIntensity', 50);                
-                heatmap.set('gradient', heatMapGradient);
-                heatmap.setMap(map);
+                if(self.data.displayHeatmap){
+                  heatmap.set('radius', 10);
+                  heatmap.set('opacity', 0.5);
+                  heatmap.set('dissipating', false);
+                  heatmap.set('maxIntensity', 50);                
+                  heatmap.set('gradient', heatMapGradient);
+                  heatmap.setMap(map);  
+                }
               });
-            }              
-
-            map.data.setStyle({
+            }
+            
+            let markerStyle = {
               // raw binary data (extremely fast!)
               icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAiklEQVR42mNgQIAoIF4NxGegdCCSHAMzEC+NUlH5v9rF5f+ZoCAwHaig8B8oPhOmKC1NU/P//7Q0DByrqgpSGAtSdOCAry9WRXt9fECK9oIUPXwYFYVV0e2ICJCi20SbFAuyG5uiECUlkKIQmOPng3y30d0d7Lt1bm4w301jQAOgcNoIDad1yOEEAFm9fSv/VqtJAAAAAElFTkSuQmCC',
   
@@ -390,9 +427,6 @@ export class MunicipalMapPage extends React.Component {
 
               // load from Meteor server
               //icon: Meteor.absoluteUrl() + 'geodata/icons/purple-dot.png'
-
-              // load from googleapis
-              //icon: 'https://mts.googleapis.com/vt/icon/name=icons/spotlight/spotlight-waypoint-a.png&text=A&psize=16&font=fonts/Roboto-Regular.ttf&color=ff333333&ax=44&ay=48&scale=1'
 
               // load a Symbol
               // icon: {
@@ -403,21 +437,27 @@ export class MunicipalMapPage extends React.Component {
               //   strokeWeight: 0.5,
               //   scale: 5
               // },
+
               fillColor: '#ffffff',
               fillOpacity: 0.2,
               strokeColor: '#EB6600',
               strokeWeight: 0.5
+            }
 
-              // Text Label
-              //label: {
-              //  color: "blue",
-              //  fontFamily: "Courier",
-              //  fontSize: "24px",
-              //  fontWeight: "bold",
-              //  text: 'foo'
-              //}
-            });
+            if(self.data.displayMarkers){
+              markerStyle.icon = 'https://mts.googleapis.com/vt/icon/name=icons/spotlight/spotlight-waypoint-b.png&psize=16&font=fonts/Roboto-Regular.ttf&ax=44&ay=48&scale=1&color=FF7034';
+            }
+            // if(self.data.displayLabels){
+            //   markerStyle.label = {
+            //     color: 'black',
+            //     fontFamily: "Courier",
+            //     fontSize: "24px",
+            //     fontWeight: "bold",
+            //     text: 'Foo Zam'
+            //    }
+            // }
 
+            map.data.setStyle(markerStyle);
           }}
          >            
 
