@@ -54,7 +54,7 @@ Meteor.startup(function(){
   // }
 
   // if(HospitalLocations.find().count() === 0){
-  if(get(Meteor, 'settings.private.initializeHospitalIndex'))
+  if(get(Meteor, 'settings.private.initializeHospitalIndex')){
     console.log('Hospital index is empty.  Beginning initialization sequence.')
     Meteor.call('initializeHospitalIndex');
   }
