@@ -151,7 +151,7 @@ jobs:
     - run: cd ../node-on-fhir/packages && git clone https://github.com/symptomatic/covid19-on-fhir  
 
     # copy repo files into new directory
-    - run: cd ../node-on-fhir/packages && mkdir covid19-geomapping
+    - run: cd ../node-on-fhir/packages && mkdir -p covid19-geomapping
     - run: cp -R ./* ../node-on-fhir/packages/covid19-geomapping
 
     # check that they got copied into place
