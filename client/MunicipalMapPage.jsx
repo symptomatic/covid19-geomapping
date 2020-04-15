@@ -21,7 +21,7 @@ import { HTTP } from 'meteor/http';
 const AnyReactComponent = ({ text }) => <Card><CardContent>{text}</CardContent></Card>;
 
 Session.setDefault('mapName', false);
-Session.setDefault('displayHeatmap', true);
+Session.setDefault('displayHeatmap', false);
 Session.setDefault('displayMarkers', false);
 Session.setDefault('displayLabels', false);
 
@@ -31,8 +31,8 @@ Session.setDefault('centroidLongitude', -87.6297982);
 
 Session.setDefault('heatmapOpacity', 10);
 Session.setDefault('heatmapRadius', 0.5);
-Session.setDefault('heatmapMaxIntensity', 50);
-Session.setDefault('heatmapDissipating', false);
+Session.setDefault('heatmapMaxIntensity', 20);
+Session.setDefault('heatmapDissipating', true);
 
 export class MunicipalMapPage extends React.Component {
   constructor(props) {
@@ -344,35 +344,64 @@ export class MunicipalMapPage extends React.Component {
 
             if(geoJsonLayer){
 
-              function pinSymbol(color) {
-                return {
-                    path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
-                    fillColor: color,
-                    fillOpacity: 1,
-                    strokeColor: '#000',
-                    strokeWeight: 2,
-                    scale: 1
-                };
-              }
-
+              // geoJsonLayer.features.forEach(function(feature){
+              //   if(get(feature, 'geometry.coordinates[0]') && get(feature, 'geometry.coordinates[1]')){                    
+              //     dataLayer.push({
+              //       location: new maps.LatLng(get(feature, 'geometry.coordinates[1]'), get(feature, 'geometry.coordinates[0]')),                     
+              //       weight: 5});
+              //   }
+              // })   
+              
               geoJsonLayer.features.forEach(function(feature){
                 if(get(feature, 'geometry.coordinates[0]') && get(feature, 'geometry.coordinates[1]')){                    
                   dataLayer.push({
-                    location: new maps.LatLng(get(feature, 'geometry.coordinates[1]'), get(feature, 'geometry.coordinates[0]')), 
-                    icon: pinSymbol("#FFF"),
+                    location: new maps.LatLng(get(feature, 'geometry.coordinates[1]'), get(feature, 'geometry.coordinates[0]')),                     
                     weight: 5});
                 }
-              })
-              
-              map.data.addGeoJson(geoJsonLayer, { idPropertyName: 'id' });
+              })   
 
-              // if we turn on the heatmap
-              var heatmap = new maps.visualization.HeatmapLayer({
-                data: dataLayer,
-                map: map
-              });
+              var markerCollection = map.data.addGeoJson(geoJsonLayer, { idPropertyName: 'id' });
+
+              if(Array.isArray(markerCollection)){
+                markerCollection.forEach(function(feature){
+                  if (feature.getProperty('name')) {
+                    map.data.setStyle(function(feature) {
+                      let markerStyle = {
+                        icon: {
+                          url: 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png',
+                          scaledSize: new maps.Size(56, 56),
+                          labelOrigin: new maps.Point(40, 0)
+                        },
+                        fillColor: '#ffffff',
+                        fillOpacity: 0.2,
+                        strokeColor: '#EB6600',
+                        strokeWeight: 0.5
+                      };
+
+                      if(self.data.displayLabels){
+                        markerStyle.label = {
+                          color: 'black',
+                          fontFamily: "Courier",
+                          fontSize: "18px",
+                          fontWeight: "bold",
+                          text: feature.getProperty('name')                     
+                        }
+                      }                        
+                        
+                      return markerStyle;
+                    });
+                  }
+                })
+              }
+
 
               if(self.data.displayHeatmap){
+                // if we turn on the heatmap
+                var heatmap = new maps.visualization.HeatmapLayer({
+                  data: dataLayer,
+                  map: map
+                });
+
                 heatmap.set('radius', self.data.heatmapRadius);
                 heatmap.set('opacity', self.data.heatmapOpacity);
                 heatmap.set('dissipating', self.data.heatmapDissipating);
@@ -401,70 +430,45 @@ export class MunicipalMapPage extends React.Component {
                 // map.data.addGeoJson(geoJsonLayer);  
                 map.data.loadGeoJson(geodataUrl);
 
-                // if we turn on the heatmap
-                var heatmap = new maps.visualization.HeatmapLayer({
-                  data: dataLayer,
-                  map: map
-                });
 
                 if(self.data.displayHeatmap){
-                  heatmap.set('radius', 10);
-                  heatmap.set('opacity', 0.5);
-                  heatmap.set('dissipating', false);
-                  heatmap.set('maxIntensity', 50);                
+                  // if we turn on the heatmap
+                  var heatmap = new maps.visualization.HeatmapLayer({
+                    data: dataLayer,
+                    map: map
+                  });
+
+                  heatmap.set('radius', self.data.heatmapRadius);
+                  heatmap.set('opacity', self.data.heatmapOpacity);
+                  heatmap.set('dissipating', self.data.heatmapDissipating);
+                  heatmap.set('maxIntensity', self.data.heatmapMaxIntensity);                
                   heatmap.set('gradient', heatMapGradient);
                   heatmap.setMap(map);  
                 }
+
+                let markerStyle = {
+                  // raw binary data (extremely fast!)
+                  icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAiklEQVR42mNgQIAoIF4NxGegdCCSHAMzEC+NUlH5v9rF5f+ZoCAwHaig8B8oPhOmKC1NU/P//7Q0DByrqgpSGAtSdOCAry9WRXt9fECK9oIUPXwYFYVV0e2ICJCi20SbFAuyG5uiECUlkKIQmOPng3y30d0d7Lt1bm4w301jQAOgcNoIDad1yOEEAFm9fSv/VqtJAAAAAElFTkSuQmCC',
+          
+                  fillColor: '#ffffff',
+                  fillOpacity: 0.2,
+                  strokeColor: '#EB6600',
+                  strokeWeight: 0.5
+                }
+    
+                // if(self.data.displayMarkers){
+                //   markerStyle.icon = {
+                //     url: 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png',
+                //     scaledSize: new maps.Size(56, 56)
+                //   };
+                // }
+    
+                map.data.setStyle(markerStyle);
+
               });
             }
-            
-            let markerStyle = {
-              // raw binary data (extremely fast!)
-              icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAiklEQVR42mNgQIAoIF4NxGegdCCSHAMzEC+NUlH5v9rF5f+ZoCAwHaig8B8oPhOmKC1NU/P//7Q0DByrqgpSGAtSdOCAry9WRXt9fECK9oIUPXwYFYVV0e2ICJCi20SbFAuyG5uiECUlkKIQmOPng3y30d0d7Lt1bm4w301jQAOgcNoIDad1yOEEAFm9fSv/VqtJAAAAAElFTkSuQmCC',
-  
-              // load from a content delivery network
-              // icon: 'http://maps.google.com/mapfiles/ms/icons/purple-dot.png'
-
-              // load from Meteor server
-              //icon: Meteor.absoluteUrl() + 'geodata/icons/purple-dot.png'
-
-              // load a Symbol
-              // icon: {
-              //   path: maps.SymbolPath.CIRCLE,
-              //   fillColor: '#EB6600',
-              //   fillOpacity: 0.1,
-              //   strokeColor: '',
-              //   strokeWeight: 0.5,
-              //   scale: 5
-              // },
-
-              fillColor: '#ffffff',
-              fillOpacity: 0.2,
-              strokeColor: '#EB6600',
-              strokeWeight: 0.5
-            }
-
-            if(self.data.displayMarkers){
-              markerStyle.icon = 'https://mts.googleapis.com/vt/icon/name=icons/spotlight/spotlight-waypoint-b.png&psize=16&font=fonts/Roboto-Regular.ttf&ax=44&ay=48&scale=1&color=FF7034';
-            }
-            // if(self.data.displayLabels){
-            //   markerStyle.label = {
-            //     color: 'black',
-            //     fontFamily: "Courier",
-            //     fontSize: "24px",
-            //     fontWeight: "bold",
-            //     text: 'Foo Zam'
-            //    }
-            // }
-
-            map.data.setStyle(markerStyle);
           }}
-         >            
-
-          {/* <div className='homeBox' lat={this.data.center.lat} lng={ this.data.center.lng} style={{width: '180px'}}>            
-            <MapOrbital />
-            <MapDot />
-          </div> */}          
+         >                   
 
          </GoogleMapReact>;
     } else {

@@ -98,7 +98,7 @@ function GeocodingPage(props){
   let [centroidLatitude, setCentroidLatitude] = useState(41.8781136);
   let [centroidLongitude, setCentroidLongitude] = useState(-87.6297982);
 
-  let [displayHeatmapControls, setDisplayHeatmapControls] = useState(true);
+  let [displayHeatmapControls, setDisplayHeatmapControls] = useState(false);
   let [showLabels, setShowLabels] = useState(false);
   let [showMarkers, setShowMarkers] = useState(false);
 
@@ -171,7 +171,7 @@ function GeocodingPage(props){
   //-------------------------------------------------------------------
   // Toggle Methods
 
-  function handleToggleMarkers(props){
+  function handleToggleMarkers(){
     logger.warn('GeocodingPage.handleToggleMarkers()');
 
     if(showMarkers){
@@ -182,7 +182,7 @@ function GeocodingPage(props){
       Session.set('displayMarkers', true);
     }
   }
-  function handleToggleLabels(props){
+  function handleToggleLabels(){
     logger.warn('GeocodingPage.handleToggleLabels()');
 
     if(showLabels){
@@ -193,7 +193,7 @@ function GeocodingPage(props){
       Session.set('displayLabels', true);
     }
   }
-  function handleToggleHeatmapControls(props){
+  function handleToggleHeatmapControls(){
     logger.warn('GeocodingPage.handleToggleHeatmapControls()');
 
     if(displayHeatmapControls){
@@ -203,6 +203,26 @@ function GeocodingPage(props){
       setDisplayHeatmapControls(true);
       Session.set('displayHeatmap', true);
     }
+  }
+
+
+  //-------------------------------------------------------------------
+  // Slider Methods
+
+  function handleChangeOpacity(event, value){
+    console.log('handleChangeOpacity', value)
+
+    Session.set('heatmapOpacity', value)
+  }
+  function handleChangeRadius(event, value){
+    console.log('handleChangeRadius', value)
+
+    Session.set('heatmapRadius', value)
+  }
+  function handleChangeMaxIntensity(event, value){
+    console.log('handleChangeMaxIntensity', value)
+
+    Session.set('heatmapMaxIntensity', value)
   }
 
   //-------------------------------------------------------------------
@@ -227,23 +247,6 @@ function GeocodingPage(props){
       Session.set('centroidLatitude', get(result[0], 'latitude'))
       Session.set('centroidLongitude', get(result[0], 'longitude'))
     })
-  }
-
-
-  function handleChangeOpacity(event){
-    logger.warn('GeocodingPage.handleChangeOpacity()', event.currentTarget.value);
-    
-    setHeatmapOpacity(event.currentTarget.value);
-  }
-  function handleChangeRadius(event){
-    logger.warn('GeocodingPage.handleChangeRadius()', event.currentTarget.value);
-    
-    setHeatmapRadius(event.currentTarget.value);
-  }
-  function handleChangeMaxIntensity(event){
-    logger.warn('GeocodingPage.handleChangeMaxIntensity()', event.currentTarget.value);
-    
-    setHeatmapMaxIntensity(event.currentTarget.value);
   }
 
 
@@ -277,7 +280,8 @@ function GeocodingPage(props){
             "type": "Feature", 
             "properties": { 
               "id": get(location, 'id', count.toString()),                 
-              "primary_type": "POSITIVE",                           
+              "primary_type": "",                           
+              "name": get(location, 'name'),                    
               "location_zip": get(location, 'address.postalCode'),      
               "location_address": get(location, 'address.line[0]'),    
               "location_city": get(location, 'address.city'),                    
@@ -383,6 +387,12 @@ function GeocodingPage(props){
           id="geocodedLocationsTable"
           locations={locations}
           rowsPerPage={10}
+          hideType={true}
+          hideName={true}
+          hideCountry={true}
+          hideCity={true}
+          hideState={true}
+          hidePostalCode={true}
           count={locationCount}
         />
       </CardContent>
@@ -436,7 +446,7 @@ function GeocodingPage(props){
   if(displayHeatmapControls){
     heatmapControlsCard = <StyledCard id="heatmapControlsCard" style={{marginBottom: '40px'}}>
       <CardHeader                 
-        title="Heatmap" 
+        title="Heatmap Controls" 
         style={{fontSize: '100%'}} />
       <CardContent style={{fontSize: '100%', paddingBottom: '28px'}} >
         <Typography gutterBottom>
@@ -451,6 +461,7 @@ function GeocodingPage(props){
           marks
           min={0}
           max={100}
+          onChange={handleChangeOpacity}
         />
         <br />
         <br />
@@ -459,14 +470,15 @@ function GeocodingPage(props){
           Radius
         </Typography>
         <Slider
-          defaultValue={10}
+          defaultValue={50}
           //getAriaValueText={valuetext}
           aria-labelledby="discrete-slider"
           valueLabelDisplay="auto"
           step={10}
           marks
           min={0}
-          max={100}
+          max={200}
+          onChange={handleChangeRadius.bind(this)}
         />
         <br />
         <br />
@@ -479,10 +491,11 @@ function GeocodingPage(props){
           //getAriaValueText={valuetext}
           aria-labelledby="discrete-slider"
           valueLabelDisplay="auto"
-          step={10}
+          step={2}
           marks
           min={0}
-          max={100}
+          max={50}
+          onChange={handleChangeMaxIntensity}
         />
 
       </CardContent>

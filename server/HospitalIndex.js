@@ -37,7 +37,6 @@ Meteor.methods({
     }).fetch();
 
     console.log('Found ' + hospitals.length + ' hospitals.')
-
     return hospitals;
   }
 });
@@ -46,6 +45,7 @@ Meteor.methods({
 Meteor.startup(function(){
   if(get(Meteor, 'settings.private.initializeHospitalIndex') === true)
   console.log('Server is set to auto-initialize hospital index.')
+
   if(HospitalLocations.find().count() === 0){
     console.log('Hospital index is empty.  Beginning initialization sequence.')
     Meteor.call('initializeHospitalIndex');
