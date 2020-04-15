@@ -46,7 +46,15 @@ Meteor.startup(function(){
   if(get(Meteor, 'settings.private.initializeHospitalIndex') === true)
   console.log('Server is set to auto-initialize hospital index.')
 
-  if(HospitalLocations.find().count() === 0){
+  // if(Locations){
+  //   Locations._ensureIndex({ "_location": "2dsphere"});
+  // }
+  // if(HospitalLocations){
+  //   HospitalLocations._ensureIndex({ "_location": "2dsphere"});
+  // }
+
+  // if(HospitalLocations.find().count() === 0){
+  if(get(Meteor, 'settings.private.initializeHospitalIndex'))
     console.log('Hospital index is empty.  Beginning initialization sequence.')
     Meteor.call('initializeHospitalIndex');
   }
