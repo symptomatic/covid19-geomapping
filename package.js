@@ -1,6 +1,6 @@
 Package.describe({
     name: 'symptomatic:covid19-geomapping',
-    version: '0.4.1',
+    version: '0.4.2',
     summary: 'COVID19 Hackathon',
     git: 'https://github.com/symptomatic/covid19-geomapping',
     documentation: 'README.md'
@@ -30,8 +30,8 @@ Package.onUse(function(api) {
     api.addFiles('server/Geocoding.js', 'server');
     api.addFiles('server/HospitalIndex.js', 'server');
 
-    api.addFiles('geodata/illinois-epa-toxic-inventory-sites.geojson', 'client', {isAsset: true});
-    api.addFiles('geodata/covid19-patients-synthea.geojson', 'client', {isAsset: true});
+    // api.addFiles('geodata/illinois-epa-toxic-inventory-sites.geojson', 'client', {isAsset: true});
+    // api.addFiles('geodata/covid19-patients-synthea.geojson', 'client', {isAsset: true});
 
     api.addFiles('geodata/Hospitals.geojson', 'server', {isAsset: true});
 
