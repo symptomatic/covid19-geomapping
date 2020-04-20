@@ -4,6 +4,15 @@ import FhirUtilities from '../lib/FhirUtilities';
 import LocationMethods from '../lib/LocationMethods';
 
 Meteor.methods({
+  getHospitalIndexStatus: function(){
+    let status = {};
+    
+    if(HospitalLocations){
+      status.hospitalLocationsCount = HospitalLocations.find().count()
+    }
+
+    return status;
+  },
   initializeHospitalIndex: function(data){
 
     LocationMethods.initializeUnitedStatesHospitals();

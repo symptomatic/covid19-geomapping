@@ -42,11 +42,6 @@ let SidebarWorkflows = [{
   'to': '/hospital-locations',
   'href': '/hospital-locations',
   'iconName': 'hospitalO'
-}, {
-  'primaryText': 'Patient Charting',
-  'to': '/patient-chart',
-  'href': '/patient-chart',
-  'iconName': 'user'
 }];
 
 // var SidebarElements = [{

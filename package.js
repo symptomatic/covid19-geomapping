@@ -22,7 +22,7 @@ Package.onUse(function(api) {
 
     api.use('browser-policy@1.1.0')
 
-    api.use('clinical:hl7-fhir-data-infrastructure@6.4.8');
+    api.use('clinical:hl7-fhir-data-infrastructure@6.4.11');
 
     api.addFiles('stylesheets/maps.css', 'client');
     
