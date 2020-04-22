@@ -1,6 +1,6 @@
 Package.describe({
     name: 'symptomatic:covid19-geomapping',
-    version: '0.4.2',
+    version: '0.4.4',
     summary: 'COVID19 Hackathon',
     git: 'https://github.com/symptomatic/covid19-geomapping',
     documentation: 'README.md'

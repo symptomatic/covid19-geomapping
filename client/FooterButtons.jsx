@@ -54,24 +54,25 @@ import {
     }
   });
 
+const useTabStyles = makeStyles(theme => ({
+  west_button: {
+    cursor: 'pointer',
+    justifyContent: 'left',
+    color: theme.palette.appBar.contrastText,
+    marginLeft: '20px',
+    marginTop: '10px'
+  },
+  east_button: {
+    cursor: 'pointer',
+    justifyContent: 'left',
+    color: theme.palette.appBar.contrastText,
+    right: '20px',
+    marginTop: '15px',
+    position: 'absolute'
+  }
+}));
 
-  const useTabStyles = makeStyles(theme => ({
-    west_button: {
-      cursor: 'pointer',
-      justifyContent: 'left',
-      color: theme.appBarTextColor,
-      marginLeft: '20px',
-      marginTop: '10px'
-    },
-    east_button: {
-      cursor: 'pointer',
-      justifyContent: 'left',
-      color: theme.appBarTextColor,
-      right: '20px',
-      marginTop: '15px',
-      position: 'absolute'
-    }
-  }));
+
 
 //============================================================================================================================
 // Map Buttons
