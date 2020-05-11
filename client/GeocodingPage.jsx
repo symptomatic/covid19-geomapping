@@ -101,6 +101,7 @@ function GeocodingPage(props){
   let [displayHeatmapControls, setDisplayHeatmapControls] = useState(false);
   let [showLabels, setShowLabels] = useState(false);
   let [showMarkers, setShowMarkers] = useState(false);
+  let [isProximityEnabled, setIsProximityEnabled] = useState(false);
 
   //-------------------------------------------------------------------
   // Tracking
@@ -171,6 +172,15 @@ function GeocodingPage(props){
   //-------------------------------------------------------------------
   // Toggle Methods
 
+  function handleToggleProximityEnabled(){
+    logger.warn('GeocodingPage.handleToggleMarkers()');
+
+    if(isProximityEnabled){
+      setIsProximityEnabled(false);
+    } else {
+      setIsProximityEnabled(true);
+    }
+  }
   function handleToggleMarkers(){
     logger.warn('GeocodingPage.handleToggleMarkers()');
 
@@ -254,12 +264,16 @@ function GeocodingPage(props){
 
 
   function clearLocations(){
-    logger.warn('GeocodingPage.clearLocations()');
+    logger.warn('Clearing the Locations data cursor.');
     Locations.remove({});
   }
   function clearGeoJson(){
-    logger.warn('GeocodingPage.clearGeoJson()');
+    logger.warn('Clearing the geojson map layer.');
     Session.set('geoJsonLayer', "")
+  }
+  function exportGeoJson(){
+    logger.warn('Exporting the geojson map layer...');
+    Session.set('exportBuffer', Session.get('geoJsonLayer'))
   }
 
   function generateGeoJson(collectionName){
@@ -302,26 +316,26 @@ function GeocodingPage(props){
       console.log('newGeoJson', newGeoJson)
       Session.set('geoJsonLayer', newGeoJson)
     } else {
-      let proximityCount = Locations.find({_location: {$near: {
-        $geometry: {
-          type: 'Point',
-          coordinates: [-88.0020589, 42.01136169999999]
-        },
-        // Convert [mi] to [km] to [m]
-        $maxDistance: 50 * 1.60934 * 1000
-      }}}).count();
+
+      let query = {};
+
+      if(isProximityEnabled){
+        query = {_location: {$near: {
+          $geometry: {
+            type: 'Point',
+            coordinates: [-88.0020589, 42.01136169999999]
+          },
+          // Convert [mi] to [km] to [m]
+          $maxDistance: 50 * 1.60934 * 1000
+        }}}
+      }
+
+      let proximityCount = Locations.find(query).count();
   
       console.log('Found ' + proximityCount + ' locations within 50 miles of the search origin.')
   
       
-      Locations.find({_location: {$near: {
-        $geometry: {
-          type: 'Point',
-          coordinates: [-88.0020589, 42.01136169999999]
-        },
-        // Convert [mi] to [km] to [m]
-        $maxDistance: 50 * 1.60934 * 1000
-      }}}).forEach(function(location){
+      Locations.find(query).forEach(function(location){
         count++;
   
         if(get(location, 'position.longitude') && get(location, 'position.latitude')){
@@ -540,6 +554,7 @@ function GeocodingPage(props){
               </CardContent>
               <CardActions style={{display: 'inline-flex', width: '100%'}} >
                 <Button id="clearGeoJson" color="primary" className={classes.button} onClick={clearGeoJson.bind(this)} >Clear</Button> 
+                <Button id="exportGeoJson" color="primary" className={classes.button} onClick={exportGeoJson.bind(this)} >Export</Button> 
               </CardActions> 
             </StyledCard>
           </Grid>
@@ -561,7 +576,37 @@ function GeocodingPage(props){
                       defaultValue={centroidAddress}
                       onChange={ handleChangeAddress }         
                       fullWidth />
-                    <Grid container style={{marginTop: '20px', width: '100%'}}>
+
+                    <Grid container>
+                      <FormControlLabel                
+                        control={<Checkbox checked={isProximityEnabled} onChange={handleToggleProximityEnabled.bind(this)} name="isProximityEnabledToggle" />}
+                        label="Proximity Enabled"
+                        style={{marginTop: '20px'}}
+                        fullWidth
+                      />
+                    </Grid>
+                    <Grid container>
+                      <FormControlLabel                
+                        control={<Checkbox checked={showMarkers} onChange={handleToggleMarkers.bind(this)} name="showMarkersToggle" />}
+                        label="Markers"
+                        style={{marginTop: '20px'}}
+                      />
+                      <FormControlLabel                
+                        control={<Checkbox checked={showLabels} onChange={handleToggleLabels.bind(this)} name="showLabelsToggle" />}
+                        label="Labels"
+                        style={{marginTop: '20px'}}
+                      />
+                      <FormControlLabel
+                        control={<Checkbox checked={displayHeatmapControls} onChange={handleToggleHeatmapControls.bind(this)} name="displayHeatmapToggle" />}
+                        label="Heatmap"
+                        style={{marginTop: '20px'}}
+                      />
+                    </Grid>
+
+
+                  </Grid>
+                  <Grid item xs={6} style={{paddingLeft: '10px'}}>
+                    <Grid container style={{width: '100%'}}>
                       <Grid item xs={6} style={{paddingRight: '10px'}}>
                         <TextField 
                           id="mapCenterAddress" 
@@ -580,29 +625,18 @@ function GeocodingPage(props){
                           fullWidth />
                       </Grid>
                     </Grid>
-                  </Grid>
-                  <Grid item xs={6} style={{paddingLeft: '10px'}}>
                     <TextField 
                       id="searchProximity" 
                       label="Search Proximity" 
                       helperText="This should be a number (in miles)." 
                       defaultValue={50}                      
                       fullWidth
-                      style={{paddingBottom: '30px'}}
+                      style={{paddingBottom: '30px', marginTop: '20px'}}
+                      disabled={!isProximityEnabled}
                       />
 
-                    <FormControlLabel                
-                      control={<Checkbox checked={showMarkers} onChange={handleToggleMarkers.bind(this)} name="showMarkersToggle" />}
-                      label="Markers"
-                    />
-                    <FormControlLabel                
-                      control={<Checkbox checked={showLabels} onChange={handleToggleLabels.bind(this)} name="showLabelsToggle" />}
-                      label="Labels"
-                    />
-                    <FormControlLabel
-                      control={<Checkbox checked={displayHeatmapControls} onChange={handleToggleHeatmapControls.bind(this)} name="displayHeatmapToggle" />}
-                      label="Heatmap"
-                    />
+
+
 
                   </Grid>
                 </Grid>

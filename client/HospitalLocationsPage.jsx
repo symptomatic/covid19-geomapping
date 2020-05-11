@@ -13,7 +13,7 @@ import {
 
 import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
-import { LocationsTable, HospitalLocations } from 'meteor/clinical:hl7-fhir-data-infrastructure';
+import { LocationsTable, HospitalLocations, LayoutHelpers } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
@@ -164,10 +164,7 @@ export class HospitalLocationsPage extends React.Component {
     var self = this;
     var markers = [];
 
-    let headerHeight = 64;
-    if(get(Meteor, 'settings.public.defaults.prominantHeader', false)){
-      headerHeight = 128;
-    }
+    let headerHeight = LayoutHelpers.calcHeaderHeight();
 
     const rowsPerPage = get(Meteor, 'settings.public.defaults.rowsPerPage', 20);         
           
