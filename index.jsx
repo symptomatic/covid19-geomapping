@@ -38,7 +38,7 @@ var DynamicRoutes = [{
 
 
 let SidebarWorkflows = [{
-  'primaryText': 'Hospital Locations',
+  'primaryText': 'Provider Directory',
   'to': '/hospital-locations',
   'href': '/hospital-locations',
   'iconName': 'hospitalO'

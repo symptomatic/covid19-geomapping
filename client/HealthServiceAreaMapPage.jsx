@@ -332,7 +332,7 @@ export class MunicipalMapPage extends React.Component {
               baseUrl = get(Meteor, 'settings.public.baseUrl');
             }
 
-            var geodataUrl = baseUrl + '/packages/symptomatic_covid19-on-fhir/geodata/covid19-patients-synthea.geojson';
+            var geodataUrl = baseUrl + '/packages/symptomatic_saner/geodata/health_service_areas.geojson';
             //var geodataUrl = 'https://data.cityofchicago.org/resource/6zsd-86xi.geojson';
             if(get(self, "data.geodataUrl")){
               geodataUrl = get(self, "data.geodataUrl");
