@@ -220,17 +220,17 @@ function GeocodingPage(props){
   // Slider Methods
 
   function handleChangeOpacity(event, value){
-    console.log('handleChangeOpacity', value)
+    logger.trace('handleChangeOpacity', value)
 
     Session.set('heatmapOpacity', value)
   }
   function handleChangeRadius(event, value){
-    console.log('handleChangeRadius', value)
+    logger.trace('handleChangeRadius', value)
 
     Session.set('heatmapRadius', value)
   }
   function handleChangeMaxIntensity(event, value){
-    console.log('handleChangeMaxIntensity', value)
+    logger.trace('handleChangeMaxIntensity', value)
 
     Session.set('heatmapMaxIntensity', value)
   }
@@ -245,11 +245,11 @@ function GeocodingPage(props){
   }
 
   function handleGeocodeCentroid(){
-    console.log('Geocoding the map centroid: ', centroidAddress);
+    logger.debug('Geocoding the map centroid: ', centroidAddress);
     Meteor.call('geocodeAddress', {
       line: [centroidAddress]
     }, function(error, result){
-      console.log('Received a response', result)      
+      logger.trace('Received a response', result)      
 
       setCentroidLongitude(get(result[0], 'longitude'));
       setCentroidLatitude(get(result[0], 'latitude'));
@@ -391,7 +391,7 @@ function GeocodingPage(props){
   
   let locationsCard;
   if(locationCount > 0){
-    locationsCard = <StyledCard id="geocodedLocationsCard" style={{minHeight: '240px', marginBottom: '40px' }}>
+    locationsCard = <StyledCard id="geocodedLocationsCard" style={{minHeight: '240px', marginBottom: '40px', width: '100%' }}>
       <CardHeader 
         id="geocodedLocationsCount"
         title={locationsTitle}  
@@ -419,7 +419,7 @@ function GeocodingPage(props){
 
   let hospitalLocationsCard;
   if(hospitalLocationCount > 0){
-    hospitalLocationsCard = <StyledCard id="geocodedLocationsCard" style={{minHeight: '240px' }}>
+    hospitalLocationsCard = <StyledCard id="geocodedLocationsCard" style={{minHeight: '240px', width: '100%' }}>
       <CardHeader 
         id="geocodedLocationsCount"
         title={hospitalLocationsTitle}  
@@ -445,7 +445,7 @@ function GeocodingPage(props){
 
   let noLocationsCard;
   if((locationCount === 0) && (hospitalLocationCount === 0)){
-    noLocationsCard = <StyledCard style={{minHeight: '200px', marginBottom: '40px'}} disabled>
+    noLocationsCard = <StyledCard style={{minHeight: '200px', marginBottom: '40px', width: '100%'}} disabled>
       <CardContent style={{fontSize: '100%', paddingBottom: '28px', paddingTop: '50px', textAlign: 'center'}}>
         <CardHeader 
           title="No Location Data"       
@@ -458,7 +458,7 @@ function GeocodingPage(props){
 
   let heatmapControlsCard;
   if(displayHeatmapControls){
-    heatmapControlsCard = <StyledCard id="heatmapControlsCard" style={{marginBottom: '40px'}}>
+    heatmapControlsCard = <StyledCard id="heatmapControlsCard" style={{marginBottom: '40px', width: '100%'}}>
       <CardHeader                 
         title="Heatmap Controls" 
         style={{fontSize: '100%'}} />
@@ -524,7 +524,7 @@ function GeocodingPage(props){
     <PageCanvas id='geocodingPage' headerHeight={158} >
       <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} local="en">
         <Grid container spacing={3} >
-          <Grid item xs={4}>
+          <Grid item xl={4} style={{width: '100%'}}>
             <CardHeader 
                 title="Step 4 - Geocode Addresses into Lat/Lng" 
                 style={{fontSize: '100%'}} />
@@ -534,11 +534,11 @@ function GeocodingPage(props){
             { noLocationsCard }
 
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xl={4} style={{width: '100%'}}>
            <CardHeader 
               title="Step 5 - Generate Map Layer" 
               style={{fontSize: '100%'}} />
-            <StyledCard id="geocodedLocationsCard" style={{minHeight: '200px',  maxHeight: '660px'}}>
+            <StyledCard id="geocodedLocationsCard" style={{ marginBottom: '40px', minHeight: '200px',  maxHeight: '660px', width: '100%'}}>
               <CardHeader 
                 id="geoJsonPreview"
                 title="GeoJson"
@@ -558,11 +558,11 @@ function GeocodingPage(props){
               </CardActions> 
             </StyledCard>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xl={4} style={{width: '100%'}}>
            <CardHeader 
               title="Step 6 - Configure Map Options" 
               style={{fontSize: '100%'}} />
-            <StyledCard id="optionsCard" style={{marginBottom: '40px'}}>
+            <StyledCard id="optionsCard" style={{marginBottom: '80px', width: '100%'}}>
               <CardHeader                 
                 title="Map Options" 
                 style={{fontSize: '100%'}} />

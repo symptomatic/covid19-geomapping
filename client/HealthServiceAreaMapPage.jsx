@@ -264,6 +264,7 @@ export class MunicipalMapPage extends React.Component {
            defaultCenter={this.data.center}
            defaultZoom={this.data.zoom}
            options={this.data.options}
+           resetBoundsOnResize={true}
            bootstrapURLKeys={{
             key: this.data.apiKey,
             libraries: 'visualization'
