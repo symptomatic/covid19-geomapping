@@ -183,7 +183,28 @@ Meteor.methods({
     console.log('newLocation', newLocation)
     return newLocation;
   },
-  geocodeAddress: function(address){
+  geocodeLocationAddress(location){
+    console.log('Geocoding address for Location ' + location._id)
+    Meteor.call('geocodeAddress', get(location, 'address'), function(error, geocodedResult){
+      if(Array.isArray(geocodedResult)){
+        let encodedResult = geocodedResult[0];
+        Locations.update({_id: location._id}, {$set: {
+          position: {
+            longitude: get(encodedResult, 'longitude'),
+            latitude: get(encodedResult, 'latitude')
+          },
+          _location: {
+            type: "Point",
+            coordinates: [get(encodedResult, 'longitude'), get(encodedResult, 'latitude')]
+          }
+        }})  
+      }
+
+      // console.log('transactionId', transactionId);
+      // console.log('Updated location record', Locations.findOne(transactionId))
+    })
+  },
+  async geocodeAddress(address){
     // check(address, Object);
     
     console.log('received a new address to geocode', address)
@@ -194,23 +215,36 @@ Meteor.methods({
       assembledAddress = get(address, 'line[0]');
     }
     if(get(address, 'city')){
-      assembledAddress = assembledAddress + ', ' + get(address, 'city');
+      if(assembledAddress.length > 0){
+        assembledAddress = assembledAddress + ',';
+      }
+      assembledAddress = assembledAddress + get(address, 'city');
     }
     if(get(address, 'state')){
-      assembledAddress = assembledAddress + ', ' + get(address, 'state');
+      if(assembledAddress.length > 0){
+        assembledAddress = assembledAddress + ',';
+      }
+      assembledAddress = assembledAddress + get(address, 'state');
     }
     if(get(address, 'postalCode')){
-      assembledAddress = assembledAddress + ', ' + get(address, 'postalCode');
+      if(assembledAddress.length > 0){
+        assembledAddress = assembledAddress + ',';
+      }
+      assembledAddress = assembledAddress + get(address, 'postalCode');
     }
     if(get(address, 'country')){
-      assembledAddress = assembledAddress + ', ' + get(address, 'country');
+      if(assembledAddress.length > 0){
+        assembledAddress = assembledAddress + ',';
+      }
+      assembledAddress = assembledAddress + get(address, 'country');
     }
     console.log('lets try geocoding something...', assembledAddress);
 
     let geocodedResult;
     if(get(Meteor, 'settings.public.google.maps.apiKey')){
-      geocodedResult = geocoder.geocode(assembledAddress);
+      geocodedResult = await geocoder.geocode(assembledAddress);
     }
+    //console.log('Geocoded results: ', geocodedResult)
     return geocodedResult;
   },
   geocodeAddressToProfile: function(address){

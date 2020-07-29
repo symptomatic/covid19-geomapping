@@ -352,64 +352,67 @@ export class MunicipalMapPage extends React.Component {
               //       weight: 5});
               //   }
               // })   
-              
-              geoJsonLayer.features.forEach(function(feature){
-                if(get(feature, 'geometry.coordinates[0]') && get(feature, 'geometry.coordinates[1]')){                    
-                  dataLayer.push({
-                    location: new maps.LatLng(get(feature, 'geometry.coordinates[1]'), get(feature, 'geometry.coordinates[0]')),                     
-                    weight: 5});
-                }
-              })   
 
-              var markerCollection = map.data.addGeoJson(geoJsonLayer, { idPropertyName: 'id' });
-
-              if(Array.isArray(markerCollection)){
-                markerCollection.forEach(function(feature){
-                  if (feature.getProperty('name')) {
-                    map.data.setStyle(function(feature) {
-                      let markerStyle = {
-                        icon: {
-                          url: 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png',
-                          scaledSize: new maps.Size(56, 56),
-                          labelOrigin: new maps.Point(40, 0)
-                        },
-                        fillColor: '#ffffff',
-                        fillOpacity: 0.2,
-                        strokeColor: '#EB6600',
-                        strokeWeight: 0.5
-                      };
-
-                      if(self.data.displayLabels){
-                        markerStyle.label = {
-                          color: 'black',
-                          fontFamily: "Courier",
-                          fontSize: "18px",
-                          fontWeight: "bold",
-                          text: feature.getProperty('name')                     
-                        }
-                      }                        
-                        
-                      return markerStyle;
-                    });
+              if(map){
+                geoJsonLayer.features.forEach(function(feature){
+                  if(get(feature, 'geometry.coordinates[0]') && get(feature, 'geometry.coordinates[1]')){                    
+                    dataLayer.push({
+                      location: new maps.LatLng(get(feature, 'geometry.coordinates[1]'), get(feature, 'geometry.coordinates[0]')),                     
+                      weight: 5});
                   }
-                })
+                })   
+  
+                var markerCollection = map.data.addGeoJson(geoJsonLayer, { idPropertyName: 'id' });
+  
+                if(Array.isArray(markerCollection)){
+                  markerCollection.forEach(function(feature){
+                    if (feature.getProperty('name')) {
+                      map.data.setStyle(function(feature) {
+                        let markerStyle = {
+                          icon: {
+                            url: 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png',
+                            scaledSize: new maps.Size(56, 56),
+                            labelOrigin: new maps.Point(40, 0)
+                          },
+                          fillColor: '#ffffff',
+                          fillOpacity: 0.2,
+                          strokeColor: '#EB6600',
+                          strokeWeight: 0.5
+                        };
+  
+                        if(get(self, 'data.displayLabels')){
+                          markerStyle.label = {
+                            color: 'black',
+                            fontFamily: "Courier",
+                            fontSize: "18px",
+                            fontWeight: "bold",
+                            text: feature.getProperty('name')                     
+                          }
+                        }                        
+                          
+                        return markerStyle;
+                      });
+                    }
+                  })
+                }
+  
+  
+                if(self.data.displayHeatmap){
+                  // if we turn on the heatmap
+                  var heatmap = new maps.visualization.HeatmapLayer({
+                    data: dataLayer,
+                    map: map
+                  });
+  
+                  heatmap.set('radius', self.data.heatmapRadius);
+                  heatmap.set('opacity', self.data.heatmapOpacity);
+                  heatmap.set('dissipating', self.data.heatmapDissipating);
+                  heatmap.set('maxIntensity', self.data.heatmapMaxIntensity);                
+                  heatmap.set('gradient', heatMapGradient);
+                  heatmap.setMap(map);  
+                }
               }
-
-
-              if(self.data.displayHeatmap){
-                // if we turn on the heatmap
-                var heatmap = new maps.visualization.HeatmapLayer({
-                  data: dataLayer,
-                  map: map
-                });
-
-                heatmap.set('radius', self.data.heatmapRadius);
-                heatmap.set('opacity', self.data.heatmapOpacity);
-                heatmap.set('dissipating', self.data.heatmapDissipating);
-                heatmap.set('maxIntensity', self.data.heatmapMaxIntensity);                
-                heatmap.set('gradient', heatMapGradient);
-                heatmap.setMap(map);  
-              }
+              
             } else {              
               console.log('Ohai, which geodataUrl are we fetching:  ' + geodataUrl)
               HTTP.get(geodataUrl, function(error, data){
