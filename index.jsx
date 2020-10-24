@@ -42,6 +42,11 @@ let SidebarWorkflows = [{
   'to': '/hospital-locations',
   'href': '/hospital-locations',
   'iconName': 'hospitalO'
+}, {
+  'primaryText': 'Geocoding',
+  'to': '/geocoding',
+  'href': '/geocoding',
+  'iconName': 'mapO'
 }];
 
 // var SidebarElements = [{

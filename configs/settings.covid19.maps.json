@@ -33,8 +33,9 @@
     },
     "loggingThreshold": "debug",
     "defaults": {
-      "route": "/example-route",
-      "landingPage": "/example-route",
+      "route": "/",
+      "landingPage": "/",
+      "homePage": "/",
       "dateFormat": "YYYY-MM-DD",
       "prominantHeader": true,
 
@@ -48,6 +49,7 @@
           "HomePage": true,
           "FhirResources": false,
           "DynamicModules": true,
+          "SidebarWorkflows": true,
           "Theme": false,
           "ConstructionZone": false
         },
