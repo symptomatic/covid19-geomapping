@@ -1,10 +1,6 @@
 Package.describe({
     name: 'symptomatic:covid19-geomapping',
-<<<<<<< HEAD
     version: '0.4.9',
-=======
-    version: '0.4.8',
->>>>>>> 305eec10d0439260cab6f9b464c7fe81e3191130
     summary: 'COVID19 Hackathon',
     git: 'https://github.com/symptomatic/covid19-geomapping',
     documentation: 'README.md'
@@ -26,11 +22,7 @@ Package.onUse(function(api) {
 
     api.use('browser-policy@1.1.0')
 
-<<<<<<< HEAD
     api.use('clinical:hl7-fhir-data-infrastructure@6.8.2');
-=======
-    api.use('clinical:hl7-fhir-data-infrastructure@6.6.1');
->>>>>>> 305eec10d0439260cab6f9b464c7fe81e3191130
 
     api.addFiles('stylesheets/maps.css', 'client');
     
