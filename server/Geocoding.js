@@ -186,9 +186,25 @@ Meteor.methods({
   geocodeLocationAddress(location){
     console.log('Geocoding address for Location ' + location._id)
     Meteor.call('geocodeAddress', get(location, 'address'), function(error, geocodedResult){
+      if(geocodedResult){
+        console.log('Success! Geocoded results: ', geocodedResult)
+      }
+
       if(Array.isArray(geocodedResult)){
         let encodedResult = geocodedResult[0];
+        let lineAddress = '';
+        if(get(encodedResult, 'streetName')){
+          lineAddress = get(encodedResult, 'streetNumber') + " " + get(encodedResult, 'streetName');
+        }
         Locations.update({_id: location._id}, {$set: {
+          address: {
+            resourceType: "Address",
+            line: [lineAddress.trim()],
+            city: get(encodedResult, 'city', ''),
+            state: get(encodedResult, 'administrativeLevels.level1short', ''),
+            postalCode: get(encodedResult, 'zipcode', ''),
+            country: get(encodedResult, 'countryCode', '')
+          },
           position: {
             longitude: get(encodedResult, 'longitude'),
             latitude: get(encodedResult, 'latitude')
@@ -213,6 +229,12 @@ Meteor.methods({
     let assembledAddress = '';
     if(get(address, 'line[0]')){
       assembledAddress = get(address, 'line[0]');
+    }
+    if(get(address, 'line[1')){
+      if(assembledAddress.length > 0){
+        assembledAddress = assembledAddress + ',';
+      }
+      assembledAddress = assembledAddress + get(address, 'line[1]');
     }
     if(get(address, 'city')){
       if(assembledAddress.length > 0){
@@ -244,7 +266,7 @@ Meteor.methods({
     if(get(Meteor, 'settings.public.google.maps.apiKey')){
       geocodedResult = await geocoder.geocode(assembledAddress);
     }
-    //console.log('Geocoded results: ', geocodedResult)
+
     return geocodedResult;
   },
   geocodeAddressToProfile: function(address){
@@ -274,17 +296,45 @@ Meteor.methods({
       process.env.DEBUG && console.log('geocoded data:', data);
       if(data){
         if(data[0] && data[0].latitude){
-          Meteor.users.update({  _id: Meteor.userId()}, {$set:{
+          Meteor.users.update({  _id: get(Meteor.currentUser(), '_id')}, {$set:{
             'profile.locations.home.position.latitude': data[0].latitude
           }});
         }
         if(data[0] && data[0].longitude){
-          Meteor.users.update({  _id: Meteor.userId()}, {$set:{
+          Meteor.users.update({  _id: get(Meteor.currentUser(), '_id')}, {$set:{
             'profile.locations.home.position.longitude': data[0].longitude
           }});
         }
       }
     }));
+  },
+  geocodeIntegrityCheck(systemIdentifier, requestLimit){
+    console.log('--------------------------------------------------------------------------------')
+    console.log('Running geocoding integrity check on Locations collection');
+
+    if(!requestLimit){
+      requestLimit = 100
+    }
+
+    console.log('Estimating there to be ' + Locations.find({position: {$exists: false}}).count() + ' locations that need geocoding.')
+    let count = 0;    
+    Locations.find({$and: [
+      {'position': {$exists: false}},
+      {'identifier.system': systemIdentifier}
+    ]
+    }, {limit: requestLimit}).forEach(function(location){
+      console.log('No geoposition found.  Lets try geocoding... ' + location.id)
+      Meteor.call('geocodeLocationAddress', location, function(error, result){
+        if(error){
+          console.log('geocodeAddress.error', error)
+        }
+        if(result){
+          console.log('geocodeAddress.result', result) 
+        }
+      })  
+      count++;
+    });
+    console.log('Submitted geocoding requests for ' + count + ' locations.')
   }
 });
 

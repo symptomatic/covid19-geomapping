@@ -1,7 +1,7 @@
 
 import GoogleMapReact from 'google-map-react';
 import React from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
 
 import Card from '@material-ui/core/Card';
@@ -18,218 +18,219 @@ const AnyReactComponent = ({ text }) => <Card><CardContent>{text}</CardContent><
 
 Session.setDefault('mapName', false);
 
-export class HospitalsMapPage extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-  getMeteorData() {
-    let data = {
-      style: {
-        page: {
-          position: 'fixed',
-          top: '0px',
-          left: '0px',
-          height: Session.get('appHeight'),
-          width: Session.get('appWidth')
+export function HospitalsMapPage(props){
+
+  let data = {
+    style: {
+      page: {
+        position: 'fixed',
+        top: '0px',
+        left: '0px',
+        height: Session.get('appHeight'),
+        width: Session.get('appWidth')
+      }
+    },
+    center: {
+      lat: 41.8748903,
+      lng: -87.7035464
+    },
+    zoom: 13.9,
+    layers: {
+      heatmap: true,
+      points: true
+    },
+    options: {
+      panControl: false,
+      mapTypeControl: false,
+      scrollwheel: false,
+      styles: [
+        {
+          "elementType": "geometry",
+          "stylers": [
+            {
+              "color": "#f5f5f5"
+            }
+          ]
+        },
+        {
+          "elementType": "labels.icon",
+          "stylers": [
+            {
+              "visibility": "off"
+            }
+          ]
+        },
+        {
+          "elementType": "labels.text.fill",
+          "stylers": [
+            {
+              "color": "#616161"
+            }
+          ]
+        },
+        {
+          "elementType": "labels.text.stroke",
+          "stylers": [
+            {
+              "color": "#f5f5f5"
+            }
+          ]
+        },
+        {
+          "featureType": "administrative.land_parcel",
+          "elementType": "labels.text.fill",
+          "stylers": [
+            {
+              "color": "#bdbdbd"
+            }
+          ]
+        },
+        {
+          "featureType": "poi",
+          "elementType": "geometry",
+          "stylers": [
+            {
+              "color": "#eeeeee"
+            }
+          ]
+        },
+        {
+          "featureType": "poi",
+          "elementType": "labels.text.fill",
+          "stylers": [
+            {
+              "color": "#757575"
+            }
+          ]
+        },
+        {
+          "featureType": "poi.park",
+          "elementType": "geometry",
+          "stylers": [
+            {
+              "color": "#e5e5e5"
+            }
+          ]
+        },
+        {
+          "featureType": "poi.park",
+          "elementType": "labels.text.fill",
+          "stylers": [
+            {
+              "color": "#9e9e9e"
+            }
+          ]
+        },
+        {
+          "featureType": "road",
+          "elementType": "geometry",
+          "stylers": [
+            {
+              "color": "#ffffff"
+            }
+          ]
+        },
+        {
+          "featureType": "road.arterial",
+          "elementType": "labels.text.fill",
+          "stylers": [
+            {
+              "color": "#757575"
+            }
+          ]
+        },
+        {
+          "featureType": "road.highway",
+          "elementType": "geometry",
+          "stylers": [
+            {
+              "color": "#dadada"
+            }
+          ]
+        },
+        {
+          "featureType": "road.highway",
+          "elementType": "labels.text.fill",
+          "stylers": [
+            {
+              "color": "#616161"
+            }
+          ]
+        },
+        {
+          "featureType": "road.local",
+          "elementType": "labels.text.fill",
+          "stylers": [
+            {
+              "color": "#9e9e9e"
+            }
+          ]
+        },
+        {
+          "featureType": "transit.line",
+          "elementType": "geometry",
+          "stylers": [
+            {
+              "color": "#e5e5e5"
+            }
+          ]
+        },
+        {
+          "featureType": "transit.station",
+          "elementType": "geometry",
+          "stylers": [
+            {
+              "color": "#eeeeee"
+            }
+          ]
+        },
+        {
+          "featureType": "water",
+          "elementType": "geometry",
+          "stylers": [
+            {
+              "color": "#c9c9c9"
+            }
+          ]
+        },
+        {
+          "featureType": "water",
+          "elementType": "labels.text.fill",
+          "stylers": [
+            {
+              "color": "#9e9e9e"
+            }
+          ]
         }
-      },
-      center: {
-        lat: 41.8748903,
-        lng: -87.7035464
-      },
-      zoom: 13.9,
-      layers: {
-        heatmap: true,
-        points: true
-      },
-      options: {
-        panControl: false,
-        mapTypeControl: false,
-        scrollwheel: false,
-        styles: [
-          {
-            "elementType": "geometry",
-            "stylers": [
-              {
-                "color": "#f5f5f5"
-              }
-            ]
-          },
-          {
-            "elementType": "labels.icon",
-            "stylers": [
-              {
-                "visibility": "off"
-              }
-            ]
-          },
-          {
-            "elementType": "labels.text.fill",
-            "stylers": [
-              {
-                "color": "#616161"
-              }
-            ]
-          },
-          {
-            "elementType": "labels.text.stroke",
-            "stylers": [
-              {
-                "color": "#f5f5f5"
-              }
-            ]
-          },
-          {
-            "featureType": "administrative.land_parcel",
-            "elementType": "labels.text.fill",
-            "stylers": [
-              {
-                "color": "#bdbdbd"
-              }
-            ]
-          },
-          {
-            "featureType": "poi",
-            "elementType": "geometry",
-            "stylers": [
-              {
-                "color": "#eeeeee"
-              }
-            ]
-          },
-          {
-            "featureType": "poi",
-            "elementType": "labels.text.fill",
-            "stylers": [
-              {
-                "color": "#757575"
-              }
-            ]
-          },
-          {
-            "featureType": "poi.park",
-            "elementType": "geometry",
-            "stylers": [
-              {
-                "color": "#e5e5e5"
-              }
-            ]
-          },
-          {
-            "featureType": "poi.park",
-            "elementType": "labels.text.fill",
-            "stylers": [
-              {
-                "color": "#9e9e9e"
-              }
-            ]
-          },
-          {
-            "featureType": "road",
-            "elementType": "geometry",
-            "stylers": [
-              {
-                "color": "#ffffff"
-              }
-            ]
-          },
-          {
-            "featureType": "road.arterial",
-            "elementType": "labels.text.fill",
-            "stylers": [
-              {
-                "color": "#757575"
-              }
-            ]
-          },
-          {
-            "featureType": "road.highway",
-            "elementType": "geometry",
-            "stylers": [
-              {
-                "color": "#dadada"
-              }
-            ]
-          },
-          {
-            "featureType": "road.highway",
-            "elementType": "labels.text.fill",
-            "stylers": [
-              {
-                "color": "#616161"
-              }
-            ]
-          },
-          {
-            "featureType": "road.local",
-            "elementType": "labels.text.fill",
-            "stylers": [
-              {
-                "color": "#9e9e9e"
-              }
-            ]
-          },
-          {
-            "featureType": "transit.line",
-            "elementType": "geometry",
-            "stylers": [
-              {
-                "color": "#e5e5e5"
-              }
-            ]
-          },
-          {
-            "featureType": "transit.station",
-            "elementType": "geometry",
-            "stylers": [
-              {
-                "color": "#eeeeee"
-              }
-            ]
-          },
-          {
-            "featureType": "water",
-            "elementType": "geometry",
-            "stylers": [
-              {
-                "color": "#c9c9c9"
-              }
-            ]
-          },
-          {
-            "featureType": "water",
-            "elementType": "labels.text.fill",
-            "stylers": [
-              {
-                "color": "#9e9e9e"
-              }
-            ]
-          }
-        ]
-      },
-      geoJsonLayer: Session.get('geoJsonLayer')
-    };
+      ]
+    },
+    geoJsonLayer: Session.get('geoJsonLayer')
+  };
 
-    data.apiKey = get(Meteor, 'settings.public.google.maps.apiKey', '');
-    data.geodataUrl = get(Meteor, 'settings.public.google.maps.geodataUrl')
+  data.apiKey = get(Meteor, 'settings.public.google.maps.apiKey', '');
+  data.geodataUrl = get(Meteor, 'settings.public.google.maps.geodataUrl', '')
 
-    if(Session.get('geojsonUrl')){
-      data.geodataUrl = Session.get('geojsonUrl');
-    }
+  data.style.page.height = useTracker(function(){
+    return Session.get('appHeight');
+  }, [])
+  data.style.page.width = useTracker(function(){
+    return Session.get('appWidth');
+  }, [])
+  data.geoJsonLayer = useTracker(function(){
+    return Session.get('geoJsonLayer');
+  }, [])
+  data.geodataUrl = useTracker(function(){
+    return Session.get('geojsonUrl');
+  }, [])
 
-    if(get(Meteor.user(), 'profile.locations.home.position.latitude') && get(Meteor.user(), 'profile.locations.home.position.longitude')){
-      data.center.lat = get(Meteor.user(), 'profile.locations.home.position.latitude');
-      data.center.lng = get(Meteor.user(), 'profile.locations.home.position.longitude');
-    }       
-    
+  if(get(Meteor.user(), 'profile.locations.home.position.latitude') && get(Meteor.user(), 'profile.locations.home.position.longitude')){
+    data.center.lat = get(Meteor.user(), 'profile.locations.home.position.latitude');
+    data.center.lng = get(Meteor.user(), 'profile.locations.home.position.longitude');
+  }       
+  
 
-    if(process.env.NODE_ENV === "test") {
-        console.log("HospitalsMapPage[data]", data);
-    }
-    return data;
-  }
-  render(){
-    var self = this;
+
+  var self = this;
     var map;
     var globalGoogle;
 
@@ -356,8 +357,8 @@ export class HospitalsMapPage extends React.Component {
          </GoogleMapReact>
       </div>
     );
-  }
 }
 
-ReactMixin(HospitalsMapPage.prototype, ReactMeteorData);
+
+
 export default HospitalsMapPage;

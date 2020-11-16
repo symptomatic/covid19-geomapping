@@ -19,7 +19,7 @@ import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
 import React  from 'react';
-import { ReactMeteorData } from 'meteor/react-meteor-data';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
 import { get } from 'lodash';
@@ -100,97 +100,84 @@ const muiTheme = createMuiTheme({
 });
 
 
-//=============================================================================================================================================
-// TABS
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      <Box p={3}>{children}</Box>
-    </Typography>
-  );
-}
 
 
 //=============================================================================================================================================
 // MAIN COMPONENT
 
-export class HospitalLocationsPage extends React.Component {
-  getMeteorData() {
-    let data = {
-      style: {
-        opacity: Session.get('globalOpacity'),
-        tab: {
-          borderBottom: '1px solid lightgray',
-          borderRight: 'none'
-        },
-        page: {
-          position: 'fixed',
-          top: '0px',
-          left: '0px',
-          height: Session.get('appHeight'),
-          width: Session.get('appWidth')
-        },
-        canvas: {
-          left: '0px',
-          top: '0px',
-          position: 'fixed'
-        }
+export function HospitalLocationsPage(props){
+
+  let data = {
+    style: {
+      opacity: Session.get('globalOpacity'),
+      tab: {
+        borderBottom: '1px solid lightgray',
+        borderRight: 'none'
       },
-      tabIndex: Session.get('locationPageTabIndex'),
-      locationSearchFilter: Session.get('locationSearchFilter'),
-      selectedLocationId: Session.get('selectedLocationId'),
-      currentLocation: null,
-      fhirVersion: Session.get('fhirVersion'),
-      hospitalLocations: HospitalLocations.find().fetch(),
-      hospitalLocationsCount: HospitalLocations.find().count()
-    };
+      page: {
+        position: 'fixed',
+        top: '0px',
+        left: '0px',
+        height: Session.get('appHeight'),
+        width: Session.get('appWidth')
+      },
+      canvas: {
+        left: '0px',
+        top: '0px',
+        position: 'fixed'
+      }
+    },
+    locationSearchFilter: Session.get('locationSearchFilter'),
+    selectedLocationId: Session.get('selectedLocationId'),
+    currentLocation: null,
+    fhirVersion: Session.get('fhirVersion'),
+    hospitalLocations: []
+  };
 
-    
-    if(process.env.NODE_ENV === "test") console.log("HospitalLocationsPage[data]", data);
-    return data;
-  }
+  data.style.page.height = useTracker(function(){
+    return Session.get('appHeight');
+  }, [])
+  data.style.page.width = useTracker(function(){
+    return Session.get('appWidth');
+  }, [])
 
-  render() {
-    var self = this;
-    var markers = [];
+  data.locationSearchFilter = useTracker(function(){
+    return Session.get('locationSearchFilter');
+  }, [])
+  data.selectedLocationId = useTracker(function(){
+    return Session.get('selectedLocationId');
+  }, [])
+  data.hospitalLocations = useTracker(function(){
+    return HospitalLocations.find().fetch();
+  }, [])
 
-    let headerHeight = LayoutHelpers.calcHeaderHeight();
 
-    const rowsPerPage = get(Meteor, 'settings.public.defaults.rowsPerPage', 20);         
-          
-    return (
-      <PageCanvas id="locationsPage" headerHeight={headerHeight} >
-        <MuiThemeProvider theme={muiTheme} >
-          <StyledCard height="auto" scrollable={true} margin={20} >
-            <CardHeader
-              title="Hospital Locations"
+
+  let headerHeight = LayoutHelpers.calcHeaderHeight();
+
+  const rowsPerPage = get(Meteor, 'settings.public.defaults.rowsPerPage', 20);         
+        
+  return (
+    <PageCanvas id="locationsPage" headerHeight={headerHeight} >
+      <MuiThemeProvider theme={muiTheme} >
+        <StyledCard height="auto" scrollable={true} margin={20} >
+          <CardHeader
+            title="Hospital Locations"
+          />
+          <CardContent>
+          <LocationsTable 
+              locations={ data.hospitalLocations}
+              rowsPerPage={rowsPerPage}
+              count={ data.hospitalLocations.length}      
             />
-            <CardContent>
-            <LocationsTable 
-                locations={this.data.hospitalLocations}
-                rowsPerPage={rowsPerPage}
-                count={this.data.hospitalLocationsCount}      
-              />
-            </CardContent>
-          </StyledCard>
-        </MuiThemeProvider>
-      </PageCanvas>
-    );
-  }
+          </CardContent>
+        </StyledCard>
+      </MuiThemeProvider>
+    </PageCanvas>
+  );
 }
 
 
 
-ReactMixin(HospitalLocationsPage.prototype, ReactMeteorData);
 
 export default HospitalLocationsPage;

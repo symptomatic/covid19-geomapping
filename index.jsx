@@ -38,10 +38,11 @@ var DynamicRoutes = [{
 
 
 let SidebarWorkflows = [{
-  'primaryText': 'Provider Directory',
-  'to': '/hospital-locations',
-  'href': '/hospital-locations',
-  'iconName': 'hospitalO'
+  primaryText: 'Provider Directory',
+  to: '/hospital-locations',
+  href: '/hospital-locations',
+  iconName: 'hospitalO',
+  requireAuth: true
 }];
 
 // var SidebarElements = [{

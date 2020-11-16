@@ -40,7 +40,7 @@ import moment from 'moment';
 import { Patients, Encounters, Locations, HospitalLocations, Observations, EncountersTable, ConditionsTable, ProceduresTable, LocationsTable } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 
 import { PageCanvas, StyledCard, PatientTable } from 'material-fhir-ui';
-import { useTracker } from './Tracker';
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 
 import FhirUtilities from '../lib/FhirUtilities';
 
@@ -128,22 +128,32 @@ function GeocodingPage(props){
 
 
 
+  // let locationsCursor;
+  // locationsCursor = useTracker(function(){
+  //   return Locations.find();
+  // }, [props.lastUpdated]); 
+  // if(locationsCursor){
+  //   locations = locationsCursor.fetch();
+  // }
   let locationsCursor;
-  locationsCursor = useTracker(function(){
-    return Locations.find();
+  locations = useTracker(function(){
+    return Locations.find().fetch()
   }, [props.lastUpdated]); 
-  if(locationsCursor){
-    locations = locationsCursor.fetch();
-  }
+
+
+  // let hospitalLocationsCursor;
+  // hospitalLocationsCursor = useTracker(function(){
+  //   return HospitalLocations.find();
+  // }, [props.lastUpdated]); 
+  // if(hospitalLocationsCursor){
+  //   hospitalLocations = hospitalLocationsCursor.fetch();
+  // }
 
   let hospitalLocationsCursor;
-  hospitalLocationsCursor = useTracker(function(){
-    return HospitalLocations.find();
+  hospitalLocations = useTracker(function(){
+    return HospitalLocations.find().fetch();
   }, [props.lastUpdated]); 
-  if(hospitalLocationsCursor){
-    hospitalLocations = hospitalLocationsCursor.fetch();
-  }
-  
+
 
   let locationCount = 0;
   locationCount = useTracker(function(){    
@@ -582,7 +592,6 @@ function GeocodingPage(props){
                         control={<Checkbox checked={isProximityEnabled} onChange={handleToggleProximityEnabled.bind(this)} name="isProximityEnabledToggle" />}
                         label="Proximity Enabled"
                         style={{marginTop: '20px'}}
-                        fullWidth
                       />
                     </Grid>
                     <Grid container>
@@ -609,7 +618,7 @@ function GeocodingPage(props){
                     <Grid container style={{width: '100%'}}>
                       <Grid item xs={6} style={{paddingRight: '10px'}}>
                         <TextField 
-                          id="mapCenterAddress" 
+                          id="latitudeInput" 
                           label="Latitude" 
                           value={centroidLatitude}
                           fullWidth
@@ -618,7 +627,7 @@ function GeocodingPage(props){
                       </Grid>
                       <Grid item xs={6} style={{paddingLeft: '10px'}}>
                         <TextField 
-                          id="searchProximity" 
+                          id="longitudeInput" 
                           label="Longitude" 
                           value={centroidLongitude} 
                           disabled                     
@@ -626,7 +635,7 @@ function GeocodingPage(props){
                       </Grid>
                     </Grid>
                     <TextField 
-                      id="searchProximity" 
+                      id="searchProximityInput" 
                       label="Search Proximity" 
                       helperText="This should be a number (in miles)." 
                       defaultValue={50}                      
