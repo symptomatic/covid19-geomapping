@@ -33,8 +33,9 @@
     },
     "loggingThreshold": "trace",
     "defaults": {
-      "route": "/example-route",
-      "landingPage": "/example-route",
+      "route": "/",
+      "landingPage": "/",
+      "homePage": "/",
       "dateFormat": "YYYY-MM-DD",
       "prominantHeader": true,
       "displayNavbars": true,
@@ -47,6 +48,7 @@
           "HomePage": true,
           "FhirResources": false,
           "DynamicModules": true,
+          "SidebarWorkflows": true,
           "Theme": false,
           "ConstructionZone": false
         },
@@ -85,7 +87,14 @@
           "/risk-assessments",
           "/subscriptions",
           "/vitals-tracking"
-      ]
+        ],
+        "hiddenWorkflow": [
+          "/patient-quickchart",
+          "/data-pipelines",
+          "/data-import",
+          "/data-export",
+          "/data-management"
+        ]
       }
     },
     "interfaces": {
