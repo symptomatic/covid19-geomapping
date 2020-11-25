@@ -134,6 +134,7 @@ function HospitalSearchDialog(props){
           onClick={ handleFetchState.bind(this) }
         >Fetch Hospitals</Button> 
 
+        <DynamicSpacer />
     </DialogContent>
   );
 }

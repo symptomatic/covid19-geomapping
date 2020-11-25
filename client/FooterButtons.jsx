@@ -12,7 +12,7 @@ import JSON5 from 'json5';
 import { HospitalLocations } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 
 import LocationMethods from '../lib/LocationMethods';
-
+import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 
 
 //========================================================================================================
@@ -125,6 +125,14 @@ export function HospitalsMapButtons(props){
 export function HospitalLocationButtons(props){
   const buttonClasses = useTabStyles();
 
+  let currentUser = false;
+
+  currentUser = useTracker(function(){
+    return Session.get('currentUser')
+  });
+
+
+
   function handleInitChicagoHospitals(){
     console.log('User requested to initialize Chicago area Hospitals!');
 
@@ -153,7 +161,8 @@ export function HospitalLocationButtons(props){
   }
   function clearHospitals(){
     console.log('Clearing hospitals...');
-    HospitalLocations.remove({});
+
+    Meteor.call('dropHospitals')
   }
   function toggleHospitalSearchDialog(){
     console.log('Toggle dialog open/close.')
@@ -163,26 +172,37 @@ export function HospitalLocationButtons(props){
     Session.set('lastUpdated', new Date())
     Session.toggle('mainAppDialogOpen');
   }
+
+  let initHospitalServerIndexBtn;
+  let clearHospitalsBtn;
+
+  if(currentUser){
+    initHospitalServerIndexBtn = <Button onClick={ handleInitUnitedStatesHospitalsServer.bind(this) } className={ buttonClasses.west_button }>
+      Init U.S. Hospital Server Index
+    </Button>      
+    clearHospitalsBtn = <Button onClick={ clearHospitals.bind() } className={ buttonClasses.east_button }>
+      Clear Hospitals
+    </Button>
+  }
+
   return (
     <MuiThemeProvider theme={muiTheme} >
       {/* <Button onClick={ handleInitChicagoHospitals.bind(this) } className={ buttonClasses.west_button }>
         Init Chicago Hospitals
       </Button> */}
-      {/* <Button onClick={ handleInitUnitedStatesHospitalsServer.bind(this) } className={ buttonClasses.west_button }>
-        Init U.S. Hospital Server Index
-      </Button>       */}
+      
       {/* <Button onClick={ handleInitUnitedStatesHospitalsClient.bind(this) } className={ buttonClasses.west_button }>
         Load U.S. Hospital on Client
       </Button>       */}
+
+      { initHospitalServerIndexBtn } 
+
       <Button onClick={ toggleHospitalSearchDialog.bind(this) } className={ buttonClasses.west_button }>
         Search Hospitals
       </Button>      
 
+      { clearHospitalsBtn }
 
-
-      <Button onClick={ clearHospitals.bind() } className={ buttonClasses.east_button }>
-        Clear Hospitals
-      </Button>      
     </MuiThemeProvider>
   );
 }

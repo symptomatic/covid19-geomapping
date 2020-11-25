@@ -183,7 +183,10 @@ Meteor.methods({
     console.log('newLocation', newLocation)
     return newLocation;
   },
-  geocodeLocationAddress(location){
+  geocodeLocationAddress(location, resourceCursor){
+    if(!resourceCursor){
+      resourceCursor = Locations;
+    }
     console.log('Geocoding address for Location ' + location._id)
     Meteor.call('geocodeAddress', get(location, 'address'), function(error, geocodedResult){
       if(geocodedResult){
@@ -196,7 +199,7 @@ Meteor.methods({
         if(get(encodedResult, 'streetName')){
           lineAddress = get(encodedResult, 'streetNumber') + " " + get(encodedResult, 'streetName');
         }
-        Locations.update({_id: location._id}, {$set: {
+        resourceCursor.update({_id: location._id}, {$set: {
           address: {
             resourceType: "Address",
             line: [lineAddress.trim()],
@@ -220,6 +223,7 @@ Meteor.methods({
       // console.log('Updated location record', Locations.findOne(transactionId))
     })
   },
+
   async geocodeAddress(address){
     // check(address, Object);
     

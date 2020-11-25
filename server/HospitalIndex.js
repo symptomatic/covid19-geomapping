@@ -47,6 +47,10 @@ Meteor.methods({
 
     console.log('Found ' + hospitals.length + ' hospitals.')
     return hospitals;
+  },
+  dropHospitals: function(){
+    console.log('Clearing hospitals...');
+    HospitalLocations.remove({});
   }
 });
 
