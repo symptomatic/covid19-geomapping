@@ -11,7 +11,7 @@ import {
   Box
 } from '@material-ui/core';
 
-import { StyledCard, PageCanvas } from 'material-fhir-ui';
+import { StyledCard, PageCanvas } from 'fhir-starter';
 
 import { LocationsTable, HospitalLocations, LayoutHelpers } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 

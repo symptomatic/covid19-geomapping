@@ -39,7 +39,7 @@ import moment from 'moment';
 
 import { Patients, Encounters, Locations, HospitalLocations, Observations, EncountersTable, ConditionsTable, ProceduresTable, LocationsTable } from 'meteor/clinical:hl7-fhir-data-infrastructure';
 
-import { PageCanvas, StyledCard, PatientTable } from 'material-fhir-ui';
+import { PageCanvas, StyledCard, PatientTable } from 'fhir-starter';
 import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
 
 import FhirUtilities from '../lib/FhirUtilities';
