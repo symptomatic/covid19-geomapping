@@ -511,7 +511,7 @@ export function HealthServiceAreaMapPage(props){
       console.log("NOTICE:  You are running in the 'test' environment.  Google Maps and other external libraries are disabled to prevent errors with the automated test runners.")
     }
     return(
-      <div id="mapsPage" style={this.data.style.page}>
+      <div id="healthServiceMapsPage" style={this.data.style.page}>
         {map}
       </div>
     );

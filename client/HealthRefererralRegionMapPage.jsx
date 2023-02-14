@@ -501,7 +501,7 @@ export function MunicipalMapPage(props){
     console.log("NOTICE:  You are running in the 'test' environment.  Google Maps and other external libraries are disabled to prevent errors with the automated test runners.")
   }
   return(
-    <div id="mapsPage" style={get(data, 'style.page')}>
+    <div id="healthReferralRegionMapsPage" style={get(data, 'style.page')}>
       {map}
     </div>
   );

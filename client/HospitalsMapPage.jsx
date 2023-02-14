@@ -236,7 +236,7 @@ export function HospitalsMapPage(props){
     let geoJsonLayer = this.data.geoJsonLayer;
 
     return(
-      <div id="mapsPage" style={this.data.style.page}>
+      <div id="hospitalsMapsPage" style={this.data.style.page}>
         <GoogleMapReact
            id="googleMap"
            defaultCenter={this.data.center}

@@ -533,7 +533,7 @@ function GeocodingPage(props){
   return (
     <PageCanvas id='geocodingPage' headerHeight={158} >
       <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} local="en">
-        <Grid container spacing={3} >
+        <Grid container spacing={3} style={{paddingBottom: '64px'}}>
           <Grid item xl={4} style={{width: '100%'}}>
             <CardHeader 
                 title="Step 4 - Geocode Addresses into Lat/Lng" 

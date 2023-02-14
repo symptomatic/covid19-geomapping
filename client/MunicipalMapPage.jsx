@@ -1,7 +1,7 @@
 
 import GoogleMapReact from 'google-map-react';
 import React from 'react';
-import { ReactMeteorData, useTracker } from 'meteor/react-meteor-data';
+import { useTracker } from 'meteor/react-meteor-data';
 
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -20,6 +20,7 @@ import { HTTP } from 'meteor/http';
 const AnyReactComponent = ({ text }) => <Card><CardContent>{text}</CardContent></Card>;
 
 Session.setDefault('mapName', false);
+
 Session.setDefault('displayHeatmap', false);
 Session.setDefault('displayMarkers', false);
 Session.setDefault('displayLabels', false);
@@ -280,18 +281,18 @@ export function MunicipalMapPage(props){
 
   
   var map;
-  let geoJsonLayer =  data.geoJsonLayer;
+  let geoJsonLayer =  get(data, 'geoJsonLayer');
 
   if(process.env.NODE_ENV !== "test"){
     map = <GoogleMapReact
-          id="googleMap"
+          id="municipalMap"
           defaultCenter={ data.center}
           defaultZoom={ data.zoom}
           options={ data.options}
           resetBoundsOnResize={true}
           bootstrapURLKeys={{
-          key:  data.apiKey,
-          libraries: 'visualization'
+            key:  data.apiKey,
+            libraries: 'visualization'
           }}
           yesIWantToUseGoogleMapApiInternals
           onGoogleApiLoaded={function({map, maps}){
@@ -364,7 +365,7 @@ export function MunicipalMapPage(props){
           }
 
           if(process.env.NODE_ENV === "test"){
-              console.log('geodataUrl', geodataUrl);
+            console.log('geodataUrl', geodataUrl);
           }
 
           if(geoJsonLayer){
@@ -500,7 +501,7 @@ export function MunicipalMapPage(props){
     console.log("NOTICE:  You are running in the 'test' environment.  Google Maps and other external libraries are disabled to prevent errors with the automated test runners.")
   }
   return(
-    <div id="mapsPage" style={ data.style.page}>
+    <div id="municipalMapPage" style={ data.style.page}>
       {map}
     </div>
   );
