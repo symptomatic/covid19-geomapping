@@ -1,6 +1,6 @@
 Package.describe({
     name: 'symptomatic:covid19-geomapping',
-    version: '0.5.2',
+    version: '0.5.3',
     summary: 'COVID19 Hackathon',
     git: 'https://github.com/symptomatic/covid19-geomapping',
     documentation: 'README.md'
@@ -12,7 +12,7 @@ Package.onUse(function(api) {
     
     api.use('meteor-base@1.4.0');
     api.use('ecmascript@0.13.0');
-    api.use('react-meteor-data@2.4.0');
+    api.use('react-meteor-data@2.5.1');
     api.use('session');
     api.use('mongo');
     api.use('http');
